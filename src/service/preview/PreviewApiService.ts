@@ -1,11 +1,12 @@
 import PreviewEngine from "@root/service/preview/PreviewEngine";
+import BlenderEngine from "@root/service/preview/BlenderEngine";
+import Fs from "fs";
 const express = require('express');
 
 export default class PreviewApiService {
     public expressApp;
-    public feathersApp: any = null;
 
-    constructor(private previewEngine:PreviewEngine) {
+    constructor(private previewEngine:PreviewEngine,private blenderEngine: BlenderEngine) {
     }
 
     mountAPI() {
@@ -16,13 +17,13 @@ export default class PreviewApiService {
             res.json(apiVersion);
         });
 
-        router.post('/thumbnail/generate', (req, res) => {
-            let json = req.body;
-            let fileUrl = json.url;
-            console.log("process /thumbnail/generate",json);
+        router.get('/thumbnail/', (req, res) => {
+            let fileUrl = req.query.url;
+            console.log("process /thumbnail",fileUrl);
             if (fileUrl) {
                 this.previewEngine.generateThumbnail(fileUrl).then(result => {
-                    res.json(result);
+                    //res.json(result);
+                    res.sendFile(result.filepathOut)
                 }).catch((err) => {
                     console.error(err);
                     res.status(500).json(err);
@@ -33,11 +34,73 @@ export default class PreviewApiService {
             }
         });
 
+        router.post('/thumbnail/', (req, res) => {
+            let json = req.body;
+            let fileUrl = json.url;
+            console.log("process /thumbnail",fileUrl);
+            if (fileUrl) {
+                this.previewEngine.generateThumbnail(fileUrl).then(result => {
+                    //res.json(result);
+                    res.sendFile(result.filepathOut)
+                }).catch((err) => {
+                    console.error(err);
+                    res.status(500).json(err);
+                });
+            } else {
+                console.error(new Error());
+                res.status(500).json("incorrect json");
+            }
+        });
+
+        router.get('/blender/', (req, res) => {
+            let fileUrl = req.query.url;
+            console.log("process /blender",fileUrl);
+            if (fileUrl) {
+                this.blenderEngine.execBlender(fileUrl, {} as any).then(result => {
+                    //res.json(result);
+                    res.sendFile(result.filepath)
+                    /*
+                    TODO file cleanup
+                    Fs.rmdir(folder, { recursive: true },()=>{
+                        console.log("removed temp folder at: " + folder);
+                    });*/
+                }).catch((err) => {
+                    console.error(err);
+                    res.status(500).json(err);
+                });
+            } else {
+                console.error(new Error());
+                res.status(500).json("incorrect json");
+            }
+        });
+
+        /*router.post('/blender/', (req, res) => {
+            let json = req.body;
+            let fileUrl = json.url;
+            console.log("process /blender",fileUrl);
+            if (fileUrl) {
+                this.blenderEngine.execBlender(fileUrl,json.config || {}).then(async result => {
+                    //res.json(result);
+                    await res.sendFile(result.filepath);
+                    /*
+                    TODO file cleanup
+                    Fs.rmdir(folder, { recursive: true },()=>{
+                        console.log("removed temp folder at: " + folder);
+                    });
+                }).catch((err) => {
+                    console.error(err);
+                    res.status(500).json(err);
+                });
+            } else {
+                console.error(new Error());
+                res.status(500).json("incorrect json");
+            }
+        });*/
+
         this.expressApp.use('/', router);
     }
 
-    start(expressApp: any,socketio:any): void {
-        this.feathersApp = expressApp;
+    start(expressApp: any): void {
         this.expressApp = expressApp;
         this.mountAPI();
     }

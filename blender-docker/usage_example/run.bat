@@ -1,0 +1,4 @@
+rem docker run --rm -v C:\Workspace\ApteroVR\tmp\blend\media:/media/ zocker160/blender /media/a.blend -o /media/frame_### -f 1
+docker run --rm -v C:\Workspace\ApteroVR\aptero_hub\microservice\blender-docker\usage_example\media\script.py:/media/script.py -v C:\Workspace\ApteroVR\aptero_hub\microservice\blender-docker\usage_example\media\in:/media/in -v C:\Workspace\ApteroVR\aptero_hub\microservice\blender-docker\usage_example\media\out:/media/out docker-blender
+rem docker run --rm -v ./media/:/media/ registry.aptero.co/docker-blender:latest
+rem sudo docker run --rm -v /workspace/config/apterodevhub/3dpreview/tmp/media/in:/media/in -v /workspace/config/apterodevhub/3dpreview/tmp/media/out:/media/out registry.aptero.co/docker-blender:latest

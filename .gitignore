@@ -1,0 +1,5 @@
+/blender-docker/*.blend1
+/3d-thumbnail-service/tmp.json
+**/node_modules/**
+**/.idea/**
+**/dist/**

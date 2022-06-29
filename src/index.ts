@@ -31,7 +31,7 @@ expressApp.listen(port, () => {
     apiService.start(expressApp);
     console.log('Listening on ' + port);
     console.log("Usage example : \n" +
-      "http://127.0.0.1:"+port+"/thumbnail/?url="+"https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb\n" +
-      "http://127.0.0.1:"+port+"/blender/?url=https://files.aptero.co/api/public/dl/CJTvv0V7?inline=true\n")
+      "http://127.0.0.1:"+port+"/thumbnail/?url="+"https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb"+"\n" +
+      "http://127.0.0.1:"+port+"/blender/?url="+"https://files.aptero.co/api/public/dl/CJTvv0V7?inline=true"+"\n")
 });
 

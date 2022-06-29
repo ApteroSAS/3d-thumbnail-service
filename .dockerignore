@@ -1,0 +1,5 @@
+node_modules
+dist
+build
+blender-docker
+blender_scene_example

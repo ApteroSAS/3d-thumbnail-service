@@ -8,8 +8,8 @@ rem RUN DOCKER TO PUBLISH
 docker tag docker-blender:latest registry.aptero.co/docker-blender:latest
 docker push registry.aptero.co/docker-blender:latest
 
-docker tag docker-blender:latest registry.aptero.co/docker-blender:%1
-docker push registry.aptero.co/docker-blender:%1
+docker tag docker-blender:latest registry.aptero.co/docker-blender:3.2.0-1.0.0
+docker push registry.aptero.co/docker-blender:3.2.0-1.0.0
 
 
 GOTO :EOF

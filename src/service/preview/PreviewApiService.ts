@@ -56,14 +56,13 @@ export default class PreviewApiService {
             let fileUrl = req.query.url;
             console.log("process /blender",fileUrl);
             if (fileUrl) {
-                this.blenderEngine.execBlender(fileUrl, {} as any).then(result => {
+                this.blenderEngine.execBlender(fileUrl).then(result => {
                     //res.json(result);
-                    res.sendFile(result.filepath)
-                    /*
-                    TODO file cleanup
-                    Fs.rmdir(folder, { recursive: true },()=>{
-                        console.log("removed temp folder at: " + folder);
-                    });*/
+                    res.sendFile(result.filepath,(err: Error) => {
+                        Fs.rmdir(result.folder, { recursive: true },()=>{
+                            console.log("removed temp folder at: " + result.folder);
+                        });
+                    })
                 }).catch((err) => {
                     console.error(err);
                     res.status(500).json(err);
@@ -73,29 +72,6 @@ export default class PreviewApiService {
                 res.status(500).json("incorrect json");
             }
         });
-
-        /*router.post('/blender/', (req, res) => {
-            let json = req.body;
-            let fileUrl = json.url;
-            console.log("process /blender",fileUrl);
-            if (fileUrl) {
-                this.blenderEngine.execBlender(fileUrl,json.config || {}).then(async result => {
-                    //res.json(result);
-                    await res.sendFile(result.filepath);
-                    /*
-                    TODO file cleanup
-                    Fs.rmdir(folder, { recursive: true },()=>{
-                        console.log("removed temp folder at: " + folder);
-                    });
-                }).catch((err) => {
-                    console.error(err);
-                    res.status(500).json(err);
-                });
-            } else {
-                console.error(new Error());
-                res.status(500).json("incorrect json");
-            }
-        });*/
 
         this.expressApp.use('/', router);
     }

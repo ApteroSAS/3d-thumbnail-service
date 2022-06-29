@@ -1,18 +1,19 @@
-FROM node:13.10.1
+FROM node:16-alpine
 
 ENV PORT 8086
 EXPOSE 8086
 
 RUN curl -fsSL https://get.docker.com | sh;
+RUN apk add --update --no-cache git
+RUN apk add --update --no-cache p7zip
 
-COPY ./node_modules ./node_modules
-
-COPY ./package.json ./package.json
-COPY ./package-lock.json ./package-lock.json
-COPY ./tsconfig.json ./tsconfig.json
+COPY ./package.json .
+COPY ./yarn.lock .
+RUN yarn install
 
 COPY ./src ./src
-RUN npm run build
+COPY ./tsconfig.json ./tsconfig.json
+RUN yarn run build
 
 #RUN npm run test
 

@@ -1,7 +1,7 @@
 import sys
 import os
     
-dockerImage = "3d-thumbnail-service-v2"
+dockerImage = "3d-service"
 registry = "registry.aptero.co"
 c = os.system
 os.chdir("..")

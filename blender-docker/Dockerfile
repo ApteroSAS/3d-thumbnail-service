@@ -53,5 +53,5 @@ COPY ./script.py /media/
 
 #https://docs.blender.org/manual/en/latest/advanced/command_line/arguments.html
 #ENTRYPOINT ["/bin/sh", "-c", "/usr/bin/xvfb-run -a -s \"-screen 0 1024x768x24\" /usr/local/blender/blender -noaudio -d --background /media/blender_2.79_empty.blend --render-output /media/frame_### --render-frame 1"]
-ENTRYPOINT ["/bin/sh", "-c", "/usr/bin/xvfb-run -a -s \"-screen 0 1024x768x24\" /usr/local/blender/blender -noaudio -d --background /media/main.blend --python /media/script.py"]
+ENTRYPOINT ["/bin/sh", "-c", "/usr/bin/xvfb-run -a -s \"-screen 0 ${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}x24\" /usr/local/blender/blender -noaudio -d --background /media/main.blend --python /media/script.py"]
 #ENTRYPOINT ["/bin/sh", "-c", "/usr/bin/xvfb-run -a -s \"-screen 0 $DISPLAY_WIDTHx$DISPLAY_HEIGHTx24\" /usr/local/blender/blender -noaudio -d --background /media/main.blend --python /media/script.py"]

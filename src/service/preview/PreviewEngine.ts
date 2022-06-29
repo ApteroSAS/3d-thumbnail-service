@@ -66,7 +66,7 @@ export default class PreviewEngine {
         }
     }
 
-    async generateThumbnail(url: string): Promise<{ filepathOut:string }> {
+    async generateThumbnail(url: string): Promise<{ filepathOut:string,folder:string }> {
         //1) download url
         //2) generate thumbnail image
         //3) compute base64
@@ -108,6 +108,7 @@ export default class PreviewEngine {
         });
          */
         return {
+            folder,
             filepathOut:filepathOut
         };
     }

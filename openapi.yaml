@@ -1,0 +1,63 @@
+openapi: 3.0.1
+info:
+  title: 3D Rest
+  description: This describe the 3d rest api provided by aptero
+  termsOfService: http://aptero.co/terms/
+  contact:
+    email: admin@aptero.co
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Aptero
+  url: https://aptero.co
+servers:
+- url: https://api1.aptero.co/service/3d
+tags:
+- name: 3d services
+  description: Everything about 3d services
+  externalDocs:
+    description: Find out more
+    url: https://aptero.co
+paths:
+  /thumbnail:
+    get:
+      tags:
+      - 3d services
+      summary: Compute the thumbnail of a glb file passed in parameter
+      operationId: thumbnail
+      parameters:
+      - name: url
+        in: query
+        description: A string containing an url of a '.glb' file
+        required: true
+        schema:
+          type: string
+          default: https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb
+      responses:
+        200:
+          description: An image representing the glb file passe as parameter.
+          content: 
+            image/jpeg : {}
+  /blender:
+    get:
+      tags:
+      - 3d services
+      summary: Compute the result of a blender script
+      description: similar to executing blender --background ./main.blend --python ./script.py. The zip in parameter should be composed of a main.blend file and a script.py. see example here https://files.aptero.co/api/public/dl/CJTvv0V7?inline=true
+      operationId: blender
+      parameters:
+      - name: url
+        in: query
+        description: A string containing an url of a '.zip' file of the project
+        required: true
+        schema:
+          type: string
+          default: https://files.aptero.co/api/public/dl/CJTvv0V7?inline=true
+      responses:
+        200:
+          description: The zip file of the project after the computation
+          content: 
+            application/zip : {}
+components: {}

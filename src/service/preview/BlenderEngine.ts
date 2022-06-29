@@ -102,8 +102,7 @@ export default class BlenderEngine {
         //docker run --rm -v C:\Workspace\ApteroVR\tmp\blend\media:/media/ docker-blender
         await new Promise((resolve, reject) => {
             //useage a 3d glb file must be present in the media folder "3dfile.glb"
-            //const image = "registry.aptero.co/docker-blender:latest"
-            const image = "docker-blender:"+(config.TAG || "latest") //local mode
+            const image = "registry.aptero.co/docker-blender:"+(config.TAG || "latest")
             let cmd = "docker run --rm -e DISPLAY_WIDTH="+(config["DISPLAY_WIDTH"] || 1024)+" -e DISPLAY_HEIGHT="+(config["DISPLAY_HEIGHT"] || 768)+" -v " + folder + "/:/media/ "+image;
             console.log(cmd);
             exec(cmd, (error, stdout, stderr) => {
@@ -121,7 +120,7 @@ export default class BlenderEngine {
                 }
                 console.log(`stdout: ${stdout}`);
                 if(stdout.includes("Aborted") ||
-                    stdout.includes("Error: Cannot read file")
+                    stdout.includes("Error")
                 ){
                     reject(stdout)
                 }else {

@@ -1,4 +1,4 @@
-IF [%1] == [] GOTO error
+rem IF [%1] == [] GOTO error
 
 
 docker login

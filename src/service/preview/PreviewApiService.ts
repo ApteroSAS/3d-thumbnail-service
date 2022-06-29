@@ -23,25 +23,11 @@ export default class PreviewApiService {
             if (fileUrl) {
                 this.previewEngine.generateThumbnail(fileUrl).then(result => {
                     //res.json(result);
-                    res.sendFile(result.filepathOut)
-                }).catch((err) => {
-                    console.error(err);
-                    res.status(500).json(err);
-                });
-            } else {
-                console.error(new Error());
-                res.status(500).json("incorrect json");
-            }
-        });
-
-        router.post('/thumbnail/', (req, res) => {
-            let json = req.body;
-            let fileUrl = json.url;
-            console.log("process /thumbnail",fileUrl);
-            if (fileUrl) {
-                this.previewEngine.generateThumbnail(fileUrl).then(result => {
-                    //res.json(result);
-                    res.sendFile(result.filepathOut)
+                    res.sendFile(result.filepathOut,(err: Error) => {
+                        Fs.rmdir(result.folder, { recursive: true },()=>{
+                            console.log("removed temp folder at: " + result.folder);
+                        });
+                    })
                 }).catch((err) => {
                     console.error(err);
                     res.status(500).json(err);

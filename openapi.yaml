@@ -1,63 +1,176 @@
 openapi: 3.0.1
 info:
   title: 3D Rest
-  description: This describe the 3d rest api provided by aptero
+  version: 1.0.1
+  description: >-
+    Provide tool for runing generating thumbnail of 3d files using blender and
+    tool for scripting Blender directly in the cloud.
   termsOfService: http://aptero.co/terms/
   contact:
     email: admin@aptero.co
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.0
-externalDocs:
-  description: Find out more about Aptero
-  url: https://aptero.co
+  x-logo:
+    url: ''
 servers:
-- url: https://api1.aptero.co/service/3d
-tags:
-- name: 3d services
-  description: Everything about 3d services
-  externalDocs:
-    description: Find out more
-    url: https://aptero.co
+  - url: https://api1.aptero.co/service/3d
+  - url: http://127.0.0.1:8086
 paths:
+  /api/version:
+    get:
+      tags:
+        - service
+      responses:
+        '200':
+          description: A string representing the version.
+      operationId: version
+      summary: version of the api
   /thumbnail:
     get:
       tags:
-      - 3d services
-      summary: Compute the thumbnail of a glb file passed in parameter
-      operationId: thumbnail
+        - service
       parameters:
-      - name: url
-        in: query
-        description: A string containing an url of a '.glb' file
-        required: true
-        schema:
-          type: string
-          default: https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb
+        - name: url
+          description: A string containing an url of a '.glb' file
+          schema:
+            default: >-
+              https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb
+            type: string
+          in: query
+          required: true
       responses:
-        200:
+        '200':
+          content:
+            image/png: {}
           description: An image representing the glb file passe as parameter.
-          content: 
-            image/jpeg : {}
-  /blender:
+      operationId: thumbnail
+      summary: Compute the thumbnail of a glb file passed in parameter
+  /blender/script/{mode}:
+    post:
+      requestBody:
+        description: >-            
+            script: string, url to a ".py" file or script as string
+            scene (optional): string, url to a scene (default empty scene with a camera and a light)
+            config (optional):
+                DISPLAY_HEIGHT: number
+                DISPLAY_WIDTH: number
+                TAG: blender version default : 3.0.2-1.0.0
+                
+            Example of script:
+            import bpy
+            from bpy import context
+            
+            bpy.context.scene.frame_current = 1
+            bpy.context.scene.render.filepath = ("/media/out/"+ "thumbnail.png")
+            bpy.ops.render.render(False,animation=False,write_still=True)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/script'
+        required: true
+      tags:
+        - service
+      parameters:
+        - name: mode
+          description: output mode of the query (zip or img)
+          schema:
+            default: img
+            enum:
+              - zip
+              - img
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            image/png: {}
+            application/zip: {}
+          description: The zip file of the project after the computation
+      operationId: blender-script
+      summary: Compute the result of a blender script
+      description: >-
+        (Warnig - in zip mode the return of this api is a large file (~20MB))
+        similar to executing blender --background ./main.blend --python
+        ./script.py. The zip in parameter should be composed of a main.blend
+        (optional) file and a script.py. see example here
+        https://files.aptero.co/api/public/dl/CJTvv0V7?inline=true
+  /blender/project/{mode}:
     get:
       tags:
-      - 3d services
-      summary: Compute the result of a blender script
-      description: similar to executing blender --background ./main.blend --python ./script.py. The zip in parameter should be composed of a main.blend file and a script.py. see example here https://files.aptero.co/api/public/dl/CJTvv0V7?inline=true
-      operationId: blender
+        - service
       parameters:
-      - name: url
-        in: query
-        description: A string containing an url of a '.zip' file of the project
-        required: true
-        schema:
-          type: string
-          default: https://files.aptero.co/api/public/dl/CJTvv0V7?inline=true
+        - name: mode
+          description: output mode of the query (zip or img)
+          schema:
+            default: img
+            enum:
+              - zip
+              - img
+            type: string
+          in: path
+          required: true
+        - name: url
+          description: A string containing an url of a '.zip' file of the project
+          schema:
+            default: https://files.aptero.co/api/public/dl/CJTvv0V7?inline=true
+            type: string
+          in: query
+          required: true
       responses:
-        200:
+        '200':
+          content:
+            image/png: {}
+            application/zip: {}
           description: The zip file of the project after the computation
-          content: 
-            application/zip : {}
-components: {}
+      operationId: blender-project
+      summary: Compute the result of a blender project
+      description: >-
+        (Warnig - in zip mode the return of this api is a large file (~20MB))
+        similar to executing blender --background ./main.blend --python
+        ./script.py. The zip in parameter should be composed of a main.blend
+        file and a script.py. see example here
+        https://files.aptero.co/api/public/dl/CJTvv0V7?inline=true
+components:
+  schemas:
+    script:
+      description: An object describing the script
+      required:
+        - script
+      type: object
+      properties:
+        script:
+          type: string
+          default: https://files.aptero.co/api/public/dl/S3bocqSP?inline=true
+        scene:
+          type: string
+          default: https://files.aptero.co/api/public/dl/px-Z1yL8?inline=true
+        config:
+          type: object
+          properties:
+            DISPLAY_HEIGHT:
+              type: integer
+              default: 720
+            DISPLAY_WIDTH:
+              type: integer
+              default: 1080
+            TAG:
+              type: string
+              default: 3.0.2-1.0.0
+      x-last-modified: 1656595185177
+  securitySchemes: {}
+  headers: {}
+  responses: {}
+  parameters: {}
+tags:
+  - name: service
+    description: Everything about 3d services
+    externalDocs:
+      description: Find out more
+      url: https://aptero.co
+    x-last-modified: 1656592575008
+externalDocs:
+  description: Find out more about Aptero
+  url: https://aptero.co
+security: []

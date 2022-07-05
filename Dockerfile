@@ -12,6 +12,7 @@ COPY ./package.json .
 COPY ./yarn.lock .
 RUN yarn install
 RUN mkdir /tmp/aptero/
+COPY ./blender_scene ./blender_scene
 
 COPY ./tsconfig.json ./tsconfig.json
 COPY ./src ./src

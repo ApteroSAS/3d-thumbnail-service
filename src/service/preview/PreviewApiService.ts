@@ -12,9 +12,9 @@ export default class PreviewApiService {
     mountAPI() {
         let router = express.Router();
 
-        let apiVersion = "1.1.1";//increment this each time you change the api and break the backward compatibility (semver)
+        let apiVersion = "1.0.1";//increment this each time you change the api and break the backward compatibility (semver)
         router.get('/api/version', (req, res) => {
-            res.json(apiVersion);
+            res.json({version:apiVersion});
         });
 
         router.get('/thumbnail/', (req, res) => {
@@ -38,17 +38,41 @@ export default class PreviewApiService {
             }
         });
 
-        router.get('/blender/', (req, res) => {
-            let fileUrl = req.query.url;
-            console.log("process /blender",fileUrl);
-            if (fileUrl) {
-                this.blenderEngine.execBlender(fileUrl).then(result => {
+        router.post('/blender/script/:mode', (req, res) => {
+            let json:{
+                script:string,
+                scene:string,
+                config:string
+            } = req.body;
+            if (json.script) {
+                this.blenderEngine.execScript(json.script,json.scene,req.params.mode,json.config || {}).then(result => {
                     //res.json(result);
                     res.sendFile(result.filepath,(err: Error) => {
                         Fs.rmdir(result.folder, { recursive: true },()=>{
                             console.log("removed temp folder at: " + result.folder);
                         });
-                    })
+                    });
+                }).catch((err) => {
+                    console.error(err);
+                    res.status(500).json(err);
+                });
+            } else {
+                console.error(new Error());
+                res.status(500).json("incorrect json");
+            }
+        });
+
+        router.get('/blender/project/:mode', (req, res) => {
+            let fileUrl = req.query.url;
+            console.log("process /blender",fileUrl);
+            if (fileUrl) {
+                this.blenderEngine.execZipProject(fileUrl,req.params.mode).then(result => {
+                    //res.json(result);
+                    res.sendFile(result.filepath,(err: Error) => {
+                        Fs.rmdir(result.folder, { recursive: true },()=>{
+                            console.log("removed temp folder at: " + result.folder);
+                        });
+                    });
                 }).catch((err) => {
                     console.error(err);
                     res.status(500).json(err);

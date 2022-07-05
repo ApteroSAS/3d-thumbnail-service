@@ -101,12 +101,6 @@ export default class PreviewEngine {
         });
 
         console.log("uploading file : "+filepathOut);
-        /*
-        TODO file cleanup
-        Fs.rmdir(folder, { recursive: true },()=>{
-            console.log("removed temp folder at: " + folder);
-        });
-         */
         return {
             folder,
             filepathOut:filepathOut

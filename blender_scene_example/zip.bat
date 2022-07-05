@@ -1,1 +1,0 @@
-7z a .\scene1.zip .\scene1\*

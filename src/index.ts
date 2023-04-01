@@ -14,6 +14,7 @@ console.log(properties.VERSION);
 
 let expressApp = express();
 expressApp.use(bodyParser.json());
+expressApp.use(bodyParser.text());
 expressApp.use(cors());
 // Parse JSON and form HTTP bodies
 expressApp.use(bodyParser.urlencoded({extended: true}));
